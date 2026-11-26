@@ -1,2 +1,18 @@
+name: probe youtube
 
-# trigger
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Try yt-dlp metadata
+        run: ./node_modules/youtube-dl-exec/bin/yt-dlp --no-warnings --js-runtimes node -J https://www.youtube.com/watch?v=dQw4w9WgXcQ | head -c 400
