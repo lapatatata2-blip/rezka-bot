@@ -20,6 +20,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm rebuild ffmpeg-static
       - name: yt-dlp
         run: |
           mkdir -p bin
