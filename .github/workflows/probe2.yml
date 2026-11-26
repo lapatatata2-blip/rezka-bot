@@ -18,6 +18,7 @@ jobs:
       - name: Try clients
         shell: bash
         run: |
+          set +e
           YT=./node_modules/youtube-dl-exec/bin/yt-dlp
           for vid in dQw4w9WgXcQ jNQXAC9IVRw; do
             for c in default android tv_embedded ios mweb web_safari; do
