@@ -25,6 +25,7 @@ try {
   const candidate = path.join(pkgDir, 'bin', process.platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp')
   if (fs.existsSync(candidate)) ytdlpPath = candidate
 } catch {}
+if (process.env.REZKA_YTDLP && fs.existsSync(process.env.REZKA_YTDLP)) ytdlpPath = process.env.REZKA_YTDLP
 
 const VERTICAL = { width: 1080, height: 1920 }
 const DOWNLOAD_SHARE = 40

@@ -12,8 +12,15 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
+      - name: yt-dlp
+        run: |
+          mkdir -p bin
+          curl -fsSL -o bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux
+          chmod +x bin/yt-dlp
+          ./bin/yt-dlp --version
       - name: Slice
         env:
           YT_COOKIES_B64: ${{ secrets.YT_COOKIES_B64 }}
+          REZKA_YTDLP: ${{ github.workspace }}/bin/yt-dlp
         run: node smoke.js

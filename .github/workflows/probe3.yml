@@ -12,18 +12,24 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - name: Try clients with cookies
         shell: bash
         env:
           YT_COOKIES_B64: ${{ secrets.YT_COOKIES_B64 }}
         run: |
           set +e
+          mkdir -p bin
+          curl -fsSL -o bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux
+          chmod +x bin/yt-dlp
+          ./bin/yt-dlp --version
           echo "$YT_COOKIES_B64" | base64 -d > /tmp/yt-cookies.txt
-          YT=./node_modules/youtube-dl-exec/bin/yt-dlp
-          for c in default web mweb tv tv_embedded web_safari; do
-            if [ "$c" = "default" ]; then EXTRA=""; else EXTRA="--extractor-args youtube:player_client=$c"; fi
-            N=$($YT --js-runtimes node --no-warnings --cookies /tmp/yt-cookies.txt $EXTRA -F "https://www.youtube.com/watch?v=jNQXAC9IVRw" 2>&1 | grep -cE "^[0-9]+ ")
-            ERR=$($YT --js-runtimes node --no-warnings --cookies /tmp/yt-cookies.txt $EXTRA --skip-download --print "%(title)s" "https://www.youtube.com/watch?v=jNQXAC9IVRw" 2>&1 | tail -1)
-            echo "RC $c formats=$N -> ${ERR:0:100}"
+          YT=./bin/yt-dlp
+          for vid in jNQXAC9IVRw dQw4w9WgXcQ; do
+            for c in default web mweb tv tv_embedded; do
+              if [ "$c" = "default" ]; then EXTRA=""; else EXTRA="--extractor-args youtube:player_client=$c"; fi
+              N=$($YT --js-runtimes node --no-warnings --cookies /tmp/yt-cookies.txt $EXTRA -F "https://www.youtube.com/watch?v=$vid" 2>&1 | grep -cE "^[0-9]+ ")
+              ERR=$($YT --js-runtimes node --no-warnings --cookies /tmp/yt-cookies.txt $EXTRA --skip-download --print "%(title)s" "https://www.youtube.com/watch?v=$vid" 2>&1 | tail -1)
+              echo "RC $vid $c formats=$N -> ${ERR:0:90}"
+            done
           done
