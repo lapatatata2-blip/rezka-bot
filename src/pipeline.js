@@ -45,7 +45,10 @@ function proxyArgs() {
 }
 
 function baseYtdlpArgs() {
-  return ['--no-playlist', '--no-warnings', '--newline', '--js-runtimes', 'node', ...proxyArgs()]
+  const args = ['--no-playlist', '--no-warnings', '--newline', '--js-runtimes', 'node', ...proxyArgs()]
+  const cookies = process.env.REZKA_COOKIES_FILE
+  if (cookies && fs.existsSync(cookies)) args.push('--cookies', cookies)
+  return args
 }
 
 function videoFormatArgs(quality) {
