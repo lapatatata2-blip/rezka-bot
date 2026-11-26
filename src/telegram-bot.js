@@ -177,8 +177,10 @@ function startTelegramBot({ accounts, runJob, isBusy, getOutDir, onDone, maxRunt
         `https://api.telegram.org/bot${account.token}/getUpdates?timeout=25&offset=${offset}`,
         { signal: AbortSignal.timeout(35000) }
       )
-    } catch {
-      await sleep(3000)
+    } catch (err) {
+      // облачный бот на GitHub Actions может держать getUpdates — не мешаем ему
+      const conflict = /conflict|terminated by other/i.test(err && err.message ? err.message : '')
+      await sleep(conflict ? 60000 : 3000)
       return
     }
     for (const update of updates || []) {
