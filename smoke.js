@@ -15,8 +15,8 @@ if (cookiesB64) {
 const started = Date.now()
 runJob(
   {
-    url: 'https://youtu.be/Gs8EBb6Xfkk',
-    ranges: [{ start: 10, end: 130 }],
+    url: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
+    ranges: [{ start: 1, end: 19 }],
     outDir: './out',
     quality: 720,
     subLang: 'auto',
