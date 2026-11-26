@@ -5,8 +5,8 @@ const { runJob } = require('./src/pipeline')
 const started = Date.now()
 runJob(
   {
-    url: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-    ranges: [{ start: 1, end: 10 }],
+    url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    ranges: [{ start: 5, end: 25 }],
     outDir: './out',
     quality: 480,
     subLang: 'auto',
