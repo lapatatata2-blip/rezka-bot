@@ -180,6 +180,7 @@ function startTelegramBot({ accounts, runJob, isBusy, getOutDir, onDone, maxRunt
     } catch (err) {
       // облачный бот на GitHub Actions может держать getUpdates — не мешаем ему
       const conflict = /conflict|terminated by other/i.test(err && err.message ? err.message : '')
+      if (conflict) console.log('[bot] getUpdates занят другим экземпляром, пауза 60с')
       await sleep(conflict ? 60000 : 3000)
       return
     }
