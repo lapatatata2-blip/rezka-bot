@@ -1,0 +1,29 @@
+name: probe cookies
+
+on: workflow_dispatch
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Try clients with cookies
+        shell: bash
+        env:
+          YT_COOKIES_B64: ${{ secrets.YT_COOKIES_B64 }}
+        run: |
+          set +e
+          echo "$YT_COOKIES_B64" | base64 -d > /tmp/yt-cookies.txt
+          YT=./node_modules/youtube-dl-exec/bin/yt-dlp
+          for c in default web mweb tv tv_embedded web_safari; do
+            if [ "$c" = "default" ]; then EXTRA=""; else EXTRA="--extractor-args youtube:player_client=$c"; fi
+            N=$($YT --js-runtimes node --no-warnings --cookies /tmp/yt-cookies.txt $EXTRA -F "https://www.youtube.com/watch?v=jNQXAC9IVRw" 2>&1 | grep -cE "^[0-9]+ ")
+            ERR=$($YT --js-runtimes node --no-warnings --cookies /tmp/yt-cookies.txt $EXTRA --skip-download --print "%(title)s" "https://www.youtube.com/watch?v=jNQXAC9IVRw" 2>&1 | tail -1)
+            echo "RC $c formats=$N -> ${ERR:0:100}"
+          done
